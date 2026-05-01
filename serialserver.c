@@ -123,8 +123,8 @@ int main() {
   tty.c_cc[VTIME] = 10;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
   tty.c_cc[VMIN] = 0;
 
-  cfsetispeed(&tty, B115200);
-  cfsetospeed(&tty, B115200);
+  cfsetispeed(&tty, B921600);
+  cfsetospeed(&tty, B921600);
 
   // Save tty settings, also checking for error
   if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
