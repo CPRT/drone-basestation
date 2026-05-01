@@ -69,12 +69,12 @@ def createMessage(syncByte:int, messageType:int, payload:list[int]) -> list[int]
 ##############################################
 
 SERIAL_PORT = '/dev/ttyAMA2'
-BAUD_RATE = 115200
+BAUD_RATE = 921600
 serialTransmitter = serial.Serial(SERIAL_PORT, BAUD_RATE)
 
 _lasttimeWrite = time.monotonic()
 dtWrite = 0.004	# in seconds -> ~250Hz
-syncByte = 0xC8
+syncByte = 0xEE
 frameLength = 22+2
 messageType = 0x16
 
@@ -88,14 +88,13 @@ while True:
 		rcChannelValues = [1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]
 		payload = pack(rcChannelValues)
 		message = createMessage(syncByte, messageType, payload)
-		print("".join("{:02x}".format(a) for a in message))
 		serialTransmitter.write(message)
 		i += 1
 	if i >= 250:
 		break
 
-print("test")
-message = createMessage(syncByte, 0x2D, [0, 4])
+message = createMessage(syncByte, 0x2D, [0xEE, 0xEF, 1, 4]) # configure packet rate (4 = 500 Hz)
+print("".join("{:02x}".format(a) for a in message))
 serialTransmitter.write(message)
 i = 0
 while True:
@@ -104,7 +103,6 @@ while True:
 		rcChannelValues = [1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]
 		payload = pack(rcChannelValues)
 		message = createMessage(syncByte, messageType, payload)
-		print("".join("{:02x}".format(a) for a in message))
 		serialTransmitter.write(message)
 		i += 1
 	if i >= 1000:
